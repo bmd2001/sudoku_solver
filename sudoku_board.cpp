@@ -1,9 +1,11 @@
 #include "sudoku_board.hpp"
-
-#define N 9
+#include <coroutine>
 
 SudokuBoard::SudokuBoard(std::vector<std::vector<int>> board)
-    :m_board(board){};
+    :m_board(board), N(board.size())
+    {
+
+    };
 
 std::vector<int>& SudokuBoard::operator[](int index){
     return m_board[index];
@@ -12,14 +14,33 @@ std::vector<int>& SudokuBoard::operator[](int index){
 void SudokuBoard::printBoard() const{
     for (const auto& row : m_board) {
         for (int num : row) {
-            std::cout << num << " ";
+            if (num != 0){
+                std::cout << num << " ";
+            }
+            else{
+                std::cout << "_" << " ";
+            }
         }
         std::cout << std::endl;
     }
+    std::cout << std::endl;
 }
 
-bool SudokuBoard::isSafe(int row, int col, int num){
-    for (int cell: this->getCellInfluenceIterator(row, col)){
+bool SudokuBoard::isBoardFull(){
+    for (auto row : m_board){
+        for (auto cell : row){
+            if (cell == 0){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool SudokuBoard::isCellSafe(int row, int col, int num){
+    auto gen = this->getCellInfluenceIterator(row, col);
+    while (auto cell_pair = gen.next()) {
+        int cell = cell_pair->second;
         if (cell == num){
             return false;
         }
@@ -27,29 +48,33 @@ bool SudokuBoard::isSafe(int row, int col, int num){
     return true;
 }
 
-std::vector<int> SudokuBoard::getCellInfluenceIterator(int row, int col) {
-
-    std::vector<int> cells_;
-
-    for (int x = 0; x < N; ++x) {
-        if (x != col){
-            cells_.push_back((*this)[row][x]);
-        }
-        if (x != row){
-            cells_.push_back((*this)[x][col]);
-        }
-    }
-
-    int startRow = (row / 3) * 3;
-    int startCol = (col / 3) * 3;
-
-    for (int r = startRow; r < startRow + 3; ++r) {
-        for (int c = startCol; c < startCol + 3; ++c) {
-            if (r != row && c != col) {
-                cells_.push_back((*this)[r][c]);
+Generator<std::pair<std::pair<int, int>, int>> SudokuBoard::getBoardIterator() {
+        for (int row = 0; row < N; ++row) {
+            for (int col = 0; col < N; ++col) {
+                co_yield {{row, col}, m_board[row][col]};
             }
         }
     }
 
-    return cells_;
-}
+Generator<std::pair<std::pair<int, int>, int>> SudokuBoard::getCellInfluenceIterator(int row, int col) {
+
+   for (int x = 0; x < N; ++x) {
+            if (x != col) {
+                co_yield {{row, x}, m_board[row][x]};
+            }
+            if (x != row) {
+                co_yield {{x, col}, m_board[x][col]};
+            }
+        }
+
+        int startRow = (row / 3) * 3;
+        int startCol = (col / 3) * 3;
+
+        for (int r = startRow; r < startRow + 3; ++r) {
+            for (int c = startCol; c < startCol + 3; ++c) {
+                if (r != row && c != col) {
+                    co_yield {{r, c}, m_board[r][c]};
+                }
+            }
+        }
+    }

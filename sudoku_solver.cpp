@@ -2,35 +2,19 @@
 #include <vector>
 #include <map>
 #include "sudoku_board.hpp"
+#include "naked_singles.hpp"
 
 #define N 9 // Size of the Sudoku grid (9x9)
 
-bool areAllMapsEmpty(std::map<int, std::map<int, std::vector<int>>>& outerMap) {
-        for (const auto& outerPair : outerMap) {
-            const std::map<int, std::vector<int>>& innerMap = outerPair.second;
-            for (const auto& innerPair : innerMap) {
-                const std::vector<int> constraint = innerPair.second;
-                if (!constraint.empty()) {
-                    return false;  // Found a non-empty map
-                }
-            }
-        }
-    return true;  // All maps are empty
-}
+bool solveSudokuHuman(SudokuBoard& board) {
 
-bool solveSudokuHuman(SudokuBoard board) {
-
-    // std::map<int, std::map<int, std::vector<int>>> constraints = createConstraints(board);
+    Constraints constraints{board};
 
     bool step = true;
-
-    //while (!areAllMapsEmpty(constraints) && step){
-      //  step = nakedSingles(board, constraints);
-        //printBoard(board);
-        //std::cout << std::endl;
-    //}
-
-    std::cout << std::endl;
+    while (!board.isBoardFull() && step){
+        step = nakedSingles(board, constraints);
+        board.printBoard();
+    }
 
     return step;
 }
@@ -49,7 +33,22 @@ int main() {
         {0, 0, 0, 0, 8, 0, 0, 7, 9}
     };
 
+    std::vector<std::vector<int>> board2 = {
+        {5, 0, 6, 8, 0, 4, 0, 0, 0},
+        {0, 0, 2, 0, 0, 5, 0, 0, 8},
+        {0, 0, 0, 0, 6, 9, 5, 2, 0},
+        {0, 0, 7, 0, 0, 0, 0, 3, 0},
+        {0, 0, 4, 0, 8, 0, 6, 0, 0},
+        {0, 8, 0, 0, 0, 0, 4, 0, 0},
+        {0, 0, 0, 5, 9, 0, 0, 0, 6},
+        {9, 0, 0, 4, 0, 0, 7, 0, 0},
+        {0, 0, 5, 0, 3, 0, 8, 0, 2}
+    };
+
+
     SudokuBoard m_board{board};
+    std::cout << "First Sudoku Board:\n";
+    m_board.printBoard();
 
     if (solveSudokuHuman(m_board)) {
         std::cout << "Sudoku solved successfully:\n";
@@ -57,6 +56,17 @@ int main() {
     } else {
         std::cout << "No solution exists.\n";
         m_board.printBoard();
+    }
+
+    SudokuBoard m_board2{board2};
+    std::cout << "Second Sudoku Board:\n";
+    m_board2.printBoard();
+    if (solveSudokuHuman(m_board2)) {
+        std::cout << "Sudoku solved successfully:\n";
+        m_board2.printBoard();
+    } else {
+        std::cout << "No solution exists.\n";
+        m_board2.printBoard();
     }
 
     return 0;
