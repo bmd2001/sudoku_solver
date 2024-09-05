@@ -5,12 +5,11 @@ Constraints::Constraints(SudokuBoard& board):
     {
     std::map<int, std::map<int, std::set<int>>> result;
 
-    auto gen = board.getBoardIterator();
-    while (auto pair = gen.next()) {
-        std::pair<int, int> row_col = pair->first;
+    for (auto pair : board.getBoardIterator()) {
+        std::pair<int, int> row_col = pair.first;
         int row = row_col.first;
         int col = row_col.second;
-        int num = pair->second;
+        int num = pair.second;
 
         if (num != 0){
             result[row][col] = std::set<int>();
@@ -33,13 +32,44 @@ std::map<int, std::set<int>>& Constraints::operator[](int index){
     return map_[index];
 }
 
-void Constraints::modify(int row, int col){
-    int num = board_[row][col];
-    auto gen = board_.getCellInfluenceIterator(row, col);
-    while (auto cell_pair = gen.next()) {
-        std::pair<int, int> row_col = cell_pair->first;
-        int row = row_col.first;
-        int col = row_col.second;
-        (*this)[row][col].erase(num);
+void Constraints::modify(int row, int col, int num){
+    for (auto cell_pair : board_.getCellInfluenceIterator(row, col)) {
+        std::pair<int, int> row_col = cell_pair.first;
+        int row_2_modify = row_col.first;
+        int col_2_modify = row_col.second;
+        (*this)[row_2_modify][col_2_modify].erase(num);
+    }
+    (*this)[row][col].clear();
+}
+
+Generator<std::pair<std::pair<int, int>, std::set<int>>> Constraints::getRowConstraints(int row){
+    for (auto& [key, value] : map_[row]) {
+        if (!value.empty()){
+            co_yield {{row, key}, value};
+        }
+    }
+}
+
+Generator<std::pair<std::pair<int, int>, std::set<int>>> Constraints::getColumnConstraints(int col){
+    for (auto& [key, value] : map_) {
+        for (auto& [map_col, con] : value) {
+            if (map_col == col && !con.empty()){
+                co_yield {{key, col}, con};
+            }
+        }
+    }
+}
+
+Generator<std::pair<std::pair<int, int>, std::set<int>>> Constraints::getBoxConstraints(int box){
+    int startRow = (box / 3)*3;
+    int startCol = (box % 3)*3;
+
+    for (int r = startRow; r < startRow + 3; ++r) {
+        for (int c = startCol; c < startCol + 3; ++c) {
+            std::set<int>& con = map_[r][c];
+            if (!con.empty()) {
+                co_yield {{r, c}, con};
+            }
+        }
     }
 }

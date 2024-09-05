@@ -12,7 +12,11 @@ class Constraints{
         Constraints(SudokuBoard& board);
 
         std::map<int, std::set<int>>& operator[](int);
-        void modify(int row, int col);
+        void modify(int row, int col, int num);
+
+        Generator<std::pair<std::pair<int, int>, std::set<int>>> getRowConstraints(int row);
+        Generator<std::pair<std::pair<int, int>, std::set<int>>> getColumnConstraints(int col);
+        Generator<std::pair<std::pair<int, int>, std::set<int>>> getBoxConstraints(int box);
     
     private:
         SudokuBoard& board_;

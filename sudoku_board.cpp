@@ -38,9 +38,8 @@ bool SudokuBoard::isBoardFull(){
 }
 
 bool SudokuBoard::isCellSafe(int row, int col, int num){
-    auto gen = this->getCellInfluenceIterator(row, col);
-    while (auto cell_pair = gen.next()) {
-        int cell = cell_pair->second;
+    for (auto cell_pair : this->getCellInfluenceIterator(row, col)) {
+        int cell = cell_pair.second;
         if (cell == num){
             return false;
         }

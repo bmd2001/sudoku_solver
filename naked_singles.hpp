@@ -1,14 +1,11 @@
-#include "sudoku_board.hpp"
 #include "constraints.hpp"
-
 
 bool nakedSingles(SudokuBoard& board, Constraints& constraints){
 
     std::vector<std::pair<int, int>> naked_singles;
 
-    auto gen = board.getBoardIterator();
-    while (auto pair = gen.next()) {
-        std::pair<int, int> row_col = pair->first;
+    for (auto pair : board.getBoardIterator()) {
+        std::pair<int, int> row_col = pair.first;
         int row = row_col.first;
         int col = row_col.second;
 
@@ -22,7 +19,8 @@ bool nakedSingles(SudokuBoard& board, Constraints& constraints){
     for (auto row_col_pair : naked_singles){
         int row = row_col_pair.first;
         int col = row_col_pair.second;
-        constraints.modify(row, col);
+        constraints.modify(row, col, board[row][col]);
+        std::cout << "At (" << row+1 << ", " << col+1 << "), " << board[row][col] << " is the only number that can be placed" << std::endl;
     }
 
     return !naked_singles.empty();

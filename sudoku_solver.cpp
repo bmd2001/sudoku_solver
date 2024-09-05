@@ -3,6 +3,7 @@
 #include <map>
 #include "sudoku_board.hpp"
 #include "naked_singles.hpp"
+#include "hidden_singles.hpp"
 
 #define N 9 // Size of the Sudoku grid (9x9)
 
@@ -12,8 +13,21 @@ bool solveSudokuHuman(SudokuBoard& board) {
 
     bool step = true;
     while (!board.isBoardFull() && step){
+
+        std::cout << "Naked Singles:\n";
         step = nakedSingles(board, constraints);
-        board.printBoard();
+
+        if (!step){
+            std::cout << "None\n";
+            std::cout << "Hidden Singles:\n";
+            step = hiddenSingles(board, constraints);
+        }
+
+        std::cout << std::endl;
+
+        if (!board.isBoardFull()){
+            board.printBoard();
+        }
     }
 
     return step;
@@ -34,15 +48,15 @@ int main() {
     };
 
     std::vector<std::vector<int>> board2 = {
-        {5, 0, 6, 8, 0, 4, 0, 0, 0},
-        {0, 0, 2, 0, 0, 5, 0, 0, 8},
-        {0, 0, 0, 0, 6, 9, 5, 2, 0},
-        {0, 0, 7, 0, 0, 0, 0, 3, 0},
-        {0, 0, 4, 0, 8, 0, 6, 0, 0},
-        {0, 8, 0, 0, 0, 0, 4, 0, 0},
-        {0, 0, 0, 5, 9, 0, 0, 0, 6},
-        {9, 0, 0, 4, 0, 0, 7, 0, 0},
-        {0, 0, 5, 0, 3, 0, 8, 0, 2}
+        {0, 0, 0, 0, 0, 4, 0, 2, 8},
+        {4, 0, 6, 0, 0, 0, 0, 0, 5},
+        {1, 0, 0, 0, 3, 0, 6, 0, 0},
+        {0, 0, 0, 3, 0, 1, 0, 0, 0},
+        {0, 8, 7, 0, 0, 0, 1, 4, 0},
+        {0, 0, 0, 7, 0, 9, 0, 0, 0},
+        {0, 0, 2, 0, 1, 0, 0, 0, 3},
+        {9, 0, 0, 0, 0, 0, 5, 0, 7},
+        {6, 7, 0, 4, 0, 0, 0, 0, 0}
     };
 
 
