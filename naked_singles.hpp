@@ -1,28 +1,48 @@
-#include "constraints.hpp"
+#include "sudoku_strategy.hpp"
 
-bool nakedSingles(SudokuBoard& board, Constraints& constraints){
+class NakedSingles : public SudokuStrategy{
 
-    std::vector<std::pair<int, int>> naked_singles;
+    bool apply(SudokuBoard& board, Constraints& constraints) override{
+        naked_singles.clear();
 
-    for (auto pair : board.getBoardIterator()) {
-        std::pair<int, int> row_col = pair.first;
-        int row = row_col.first;
-        int col = row_col.second;
+        for (auto pair : board.getBoardIterator()) {
+            std::pair<int, int> row_col = pair.first;
+            int row = row_col.first;
+            int col = row_col.second;
 
-        std::set<int> cons = constraints[row][col];
-        if (cons.size() == 1){
-            naked_singles.push_back(row_col);
-            board[row][col] = *cons.begin();
+            std::set<int> cons = constraints[row][col];
+            if (cons.size() == 1){
+                int num = *cons.begin();
+                naked_singles.emplace_back(row+1, col+1, num);
+                board[row][col] = num;
+            }
         }
-    }
 
-    for (auto row_col_pair : naked_singles){
-        int row = row_col_pair.first;
-        int col = row_col_pair.second;
-        constraints.modify(row, col, board[row][col]);
-        std::cout << "At (" << row+1 << ", " << col+1 << "), " << board[row][col] << " is the only number that can be placed" << std::endl;
-    }
+        for (const auto& [row, col, num] : naked_singles){
+            constraints.modify(row-1, col-1, num);
+        }
 
-    return !naked_singles.empty();
+        return !naked_singles.empty();
+    };
 
-}
+    void print() const override{
+        std::cout << name() << ":\n";
+        if (naked_singles.empty()) {
+            std::cout << "None\n";
+        } else {
+            for (const auto& [row, col, num] : naked_singles) {
+                std::cout << "At (" << row << ", " << col << "), " 
+                << num << " is the only number that can be placed\n";
+            }
+            std::cout << std::endl;
+        }
+    };
+
+    std::string name() const override {
+        return "Naked Singles";
+    };
+
+    private:
+        std::vector<std::tuple<int, int, int>> naked_singles;
+        
+};

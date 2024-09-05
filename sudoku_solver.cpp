@@ -12,20 +12,27 @@ bool solveSudokuHuman(SudokuBoard& board) {
     auto start = std::chrono::high_resolution_clock::now();
 
     Constraints constraints{board};
+    std::vector<std::unique_ptr<SudokuStrategy>> strategies;
+    strategies.push_back(std::make_unique<NakedSingles>());
+    strategies.push_back(std::make_unique<HiddenSingles>());
 
-    bool step = true;
-    while (!board.isBoardFull() && step){
 
-        std::cout << "Naked Singles:\n";
-        step = nakedSingles(board, constraints);
+    while (!board.isBoardFull()){
+        bool progressMade = false;
 
-        if (!step){
-            std::cout << "None\n";
-            std::cout << "Hidden Singles:\n";
-            step = hiddenSingles(board, constraints);
+        for (const auto& strategy : strategies){
+            progressMade = strategy->apply(board, constraints);  // Apply strategy
+            strategy->print();  // Print results regardless of success
+
+            if (progressMade) {
+                break;  // Stop trying other strategies and go for another iteration
+            }
         }
 
-        std::cout << std::endl;
+        // If no strategy made progress, exit the loop
+        if (!progressMade) {
+            break;
+        }
 
         if (!board.isBoardFull()){
             board.printBoard();
@@ -36,7 +43,7 @@ bool solveSudokuHuman(SudokuBoard& board) {
     std::chrono::duration<double, std::milli> duration = end - start;
     std::cout << "Execution time: " << duration.count() << " ms" << std::endl;
 
-    return step;
+    return board.isBoardFull();
 }
 
 int main() {
