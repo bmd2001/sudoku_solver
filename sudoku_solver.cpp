@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <chrono>
 #include "sudoku_board.hpp"
 #include "naked_singles.hpp"
 #include "hidden_singles.hpp"
@@ -8,6 +9,7 @@
 #define N 9 // Size of the Sudoku grid (9x9)
 
 bool solveSudokuHuman(SudokuBoard& board) {
+    auto start = std::chrono::high_resolution_clock::now();
 
     Constraints constraints{board};
 
@@ -29,6 +31,10 @@ bool solveSudokuHuman(SudokuBoard& board) {
             board.printBoard();
         }
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> duration = end - start;
+    std::cout << "Execution time: " << duration.count() << " ms" << std::endl;
 
     return step;
 }
