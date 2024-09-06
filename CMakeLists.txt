@@ -20,3 +20,16 @@ add_executable(SudokuSolver src/sudoku_solver.cpp)
 
 # Link libraries to the executable
 target_link_libraries(SudokuSolver PRIVATE src_lib strategies_lib utils_lib)
+
+find_program(CPPCHECK_EXECUTABLE cppcheck PATHS "/usr/local/bin")
+
+if (CPPCHECK_EXECUTABLE)
+    add_custom_target(cppcheck
+        COMMAND ${CPPCHECK_EXECUTABLE} --enable=all --inconclusive --quiet --suppress=missingIncludeSystem
+                --project=${CMAKE_BINARY_DIR}/compile_commands.json
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running cppcheck on the source files"
+    )
+else()
+    message(WARNING "cppcheck executable not found. Install cppcheck to use this target.")
+endif()
