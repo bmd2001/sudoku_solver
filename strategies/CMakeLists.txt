@@ -2,6 +2,7 @@
 add_library(strategies_lib STATIC
     hidden_singles.cpp
     naked_singles.cpp
+    naked_groups.cpp
 )
 
 # Specify include directories for this header-only library

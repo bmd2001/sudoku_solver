@@ -5,6 +5,7 @@
 #include <iostream>
 #include <optional>
 #include <utility>
+#include <functional>
 
 // Generator class template to handle coroutine behavior
 template<typename T>
@@ -100,6 +101,27 @@ public:
 
 private:
     handle_type coro_handle;
+};
+
+template<typename T, typename... Args>
+class ResettableGenerator {
+public:
+    using GenFunc = std::function<Generator<T>(Args...)>;
+
+    explicit ResettableGenerator(GenFunc gen_func) 
+        : gen_func_(gen_func), generator_(gen_func()) {}
+
+    void reset() {
+        generator_ = gen_func_();  // Reset by creating a new generator
+    }
+
+    Generator<T>& generator() {
+        return generator_;
+    }
+
+private:
+    GenFunc gen_func_;
+    Generator<T> generator_;
 };
 
 #endif

@@ -5,29 +5,26 @@
 #include <set>
 #include "generator.hpp"
 
+Generator<std::pair<std::pair<int, int>, int>> findUniqueElements(Generator<std::pair<std::pair<int, int>, std::set<int>>>& constraints);
+std::string setToString(const std::set<int>& mySet);
 
-Generator<std::pair<std::pair<int, int>, int>> findUniqueElements(Generator<std::pair<std::pair<int, int>, std::set<int>>>& constraints) {
-    std::map<int, std::pair<int, int>> candidates;
-    std::set<int> duplicates;
-
-    for (const auto& [pair, cons] : constraints) {
-        std::map<int, std::pair<int, int>> temp_candidates = candidates;
-        for (int num : cons) {
-            if (candidates.count(num) == 0 && duplicates.count(num) == 0){
-                temp_candidates[num] = pair;
+template <typename T>
+std::vector<std::vector<T>> generateCombinations(const std::vector<T>& elements, int k) {
+    std::vector<std::vector<T>> combinations;
+    if (k <= elements.size()) {
+        std::vector<bool> mask(elements.size(), false);
+        std::fill(mask.begin(), mask.begin() + k, true);
+        do {
+            std::vector<T> combination;
+            for (size_t i = 0; i < mask.size(); ++i) {
+                if (mask[i]) {
+                    combination.push_back(elements[i]);
+                }
             }
-            else
-            {
-                temp_candidates.erase(num);
-                duplicates.insert(num);
-            }   
-        }
-        candidates = std::move(temp_candidates);
+            combinations.push_back(combination);
+        } while (std::prev_permutation(mask.begin(), mask.end()));
     }
-
-    for (const auto& [num, pair] : candidates){
-        co_yield {pair, num};
-    }
+    return combinations;
 }
 
 #endif

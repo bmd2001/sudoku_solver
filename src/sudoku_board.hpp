@@ -5,6 +5,7 @@
 #include <vector>
 #include "generator.hpp"
 
+typedef std::pair<int, int> Cell;
 class SudokuBoard{
 
     public:
@@ -15,8 +16,8 @@ class SudokuBoard{
         bool isBoardFull();
         bool isCellSafe(int row, int col, int num);
         
-        Generator<std::pair<std::pair<int, int>, int>> getBoardIterator();
-        Generator<std::pair<std::pair<int, int>, int>> getCellInfluenceIterator(int row, int col);
+        Generator<std::pair<Cell, int>> getBoardIterator();
+        Generator<std::pair<Cell, int>> getCellInfluenceIterator(int row, int col);
         const int N;
     
     private:

@@ -5,6 +5,7 @@
 #include "sudoku_board.hpp"
 #include "naked_singles.hpp"
 #include "hidden_singles.hpp"
+#include "naked_groups.hpp"
 
 #define N 9 // Size of the Sudoku grid (9x9)
 
@@ -15,7 +16,7 @@ bool solveSudokuHuman(SudokuBoard& board) {
     std::vector<std::unique_ptr<SudokuStrategy>> strategies;
     strategies.push_back(std::make_unique<NakedSingles>());
     strategies.push_back(std::make_unique<HiddenSingles>());
-
+    strategies.push_back(std::make_unique<NakedGroups>());
 
     while (!board.isBoardFull()){
         bool progressMade = false;
@@ -72,6 +73,17 @@ int main() {
         {6, 7, 0, 4, 0, 0, 0, 0, 0}
     };
 
+    std::vector<std::vector<int>> board3 = {
+        {7, 2, 0, 0, 9, 6, 0, 0, 3},
+        {0, 0, 0, 2, 0, 5, 0, 0, 0},
+        {0, 8, 0, 0, 0, 4, 0, 2, 0},
+        {0, 0, 0, 0, 0, 0, 0, 6, 0},
+        {1, 0, 6, 5, 0, 3, 8, 0, 7},
+        {0, 4, 0, 0, 0, 0, 0, 0, 0},
+        {0, 3, 0, 8, 0, 0, 0, 9, 0},
+        {0, 0, 0, 7, 0, 2, 0, 0, 0},
+        {2, 0, 0, 4, 3, 0, 0, 1, 8}
+    };
 
     SudokuBoard m_board{board};
     std::cout << "First Sudoku Board:\n";
@@ -94,6 +106,17 @@ int main() {
     } else {
         std::cout << "No solution exists.\n";
         m_board2.printBoard();
+    }
+
+    SudokuBoard m_board3{board3};
+    std::cout << "Third Sudoku Board:\n";
+    m_board3.printBoard();
+    if (solveSudokuHuman(m_board3)) {
+        std::cout << "Sudoku solved successfully:\n";
+        m_board3.printBoard();
+    } else {
+        std::cout << "No solution exists.\n";
+        m_board3.printBoard();
     }
 
     return 0;

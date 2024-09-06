@@ -36,7 +36,7 @@ bool HiddenSingles::apply(SudokuBoard& board, Constraints& constraints){
 void HiddenSingles::print() const{
     std::cout << name() << ":\n";
     if (hidden_singles.empty()) {
-        std::cout << "None";
+        std::cout << "None\n";
     } else {
         for (const auto& [type, index, num, row, col] : hidden_singles) {
             std::cout << "In " << type << " " << index << ", "

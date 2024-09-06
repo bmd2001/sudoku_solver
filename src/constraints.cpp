@@ -2,7 +2,7 @@
 
 Constraints::Constraints(SudokuBoard& board):
     board_(board)
-    {
+{
     std::map<int, std::map<int, std::set<int>>> result;
 
     for (auto pair : board.getBoardIterator()) {
@@ -23,9 +23,13 @@ Constraints::Constraints(SudokuBoard& board):
             }
             result[row][col] = constraints;
         }
+    
     }
 
     map_ = result;
+    generator_map_["row"] = [this](int i) { return this->getRowConstraints(i); };
+    generator_map_["column"] = [this](int i) { return this->getColumnConstraints(i); };
+    generator_map_["box"] = [this](int i) { return this->getBoxConstraints(i); };
 }
 
 std::map<int, std::set<int>>& Constraints::operator[](int index){
@@ -40,6 +44,29 @@ void Constraints::modify(int row, int col, int num){
         (*this)[row_2_modify][col_2_modify].erase(num);
     }
     (*this)[row][col].clear();
+}
+
+void Constraints::modifyGroup(int index, std::string type, std::vector<Cell> cells, std::set<int> nums){
+    auto generator = generator_map_[type](index);
+    for (auto [pair, cons] : generator){
+        int row = pair.first;
+        int col = pair.second;
+        if (std::find(cells.begin(), cells.end(), pair) != cells.end()){
+            std::set<int> intersection;
+            std::set_intersection(nums.begin(), nums.end(),
+                          cons.begin(), cons.end(),
+                          std::inserter(intersection, intersection.begin()));
+            
+            (*this)[row][col] = intersection;
+        }
+        else{
+            std::set<int> difference;
+            std::set_difference(cons.begin(), cons.end(),
+                                nums.begin(), nums.end(),
+                                std::inserter(difference, difference.begin()));
+            (*this)[row][col] = difference;
+        }
+    }
 }
 
 Generator<std::pair<std::pair<int, int>, std::set<int>>> Constraints::getRowConstraints(int row){
