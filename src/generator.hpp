@@ -12,7 +12,7 @@ template<typename T>
 class Generator {
 public:
 
-// cppcheck-suppress-begin unusedFunction
+    // cppcheck-suppress-begin unusedFunction
     struct promise_type {
         T current_value;
 
@@ -30,7 +30,7 @@ public:
         static void return_void() {}
         static void unhandled_exception() { std::terminate(); }
     };
-// cppcheck-suppress-end unusedFunction
+    // cppcheck-suppress-end unusedFunction
 
     using handle_type = std::coroutine_handle<promise_type>;
 
