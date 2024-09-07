@@ -10,14 +10,14 @@ class SudokuBoard{
 
     public:
 
-        SudokuBoard(std::vector<std::vector<int>> board);
+        explicit SudokuBoard(const std::vector<std::vector<int>>& board);
         std::vector<int>& operator[](int);
         void printBoard() const;
         bool isBoardFull();
-        bool isCellSafe(int row, int col, int num);
+        bool isCellSafe(int row, int col, int num) const;
         
-        Generator<std::pair<Cell, int>> getBoardIterator();
-        Generator<std::pair<Cell, int>> getCellInfluenceIterator(int row, int col);
+        Generator<std::pair<Cell, int>> getBoardIterator() const;
+        Generator<std::pair<Cell, int>> getCellInfluenceIterator(int row, int col) const;
         const int N;
     
     private:

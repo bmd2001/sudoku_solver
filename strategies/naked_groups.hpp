@@ -14,7 +14,7 @@ class NakedGroups : public SudokuStrategy{
     private:
         std::vector<std::tuple<std::string, int, std::vector<Cell>, std::set<int>>> naked_groups;
         std::set<std::pair<std::vector<Cell>, std::set<int>>> already_visited;
-        std::pair<bool, std::set<int>> isGroupValid(std::vector<std::set<int>> candidates, int group_size, std::vector<Cell> cells);
+        std::pair<bool, std::set<int>> isGroupValid(const std::vector<std::set<int>>& candidates, int group_size, std::vector<Cell> cells);
         
 };
 

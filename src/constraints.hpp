@@ -9,7 +9,7 @@ class Constraints{
 
     public:
 
-        Constraints(SudokuBoard& board);
+        explicit Constraints(SudokuBoard& board);
 
         std::map<int, std::set<int>>& operator[](int);
         void modify(int row, int col, int num);

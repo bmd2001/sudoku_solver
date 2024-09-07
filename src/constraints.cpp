@@ -9,9 +9,9 @@ Constraints::Constraints(SudokuBoard& board):
         std::pair<int, int> row_col = pair.first;
         int row = row_col.first;
         int col = row_col.second;
-        int num = pair.second;
+        int cell_value_num = pair.second;
 
-        if (num != 0){
+        if (cell_value_num != 0){
             result[row][col] = std::set<int>();
         }
         else{

@@ -101,7 +101,7 @@ std::string NakedGroups::name() const{
     return "Naked Groups";
 }
 
-std::pair<bool, std::set<int>> NakedGroups::isGroupValid(std::vector<std::set<int>> candidates, int group_size,  std::vector<Cell> cells){
+std::pair<bool, std::set<int>> NakedGroups::isGroupValid(const std::vector<std::set<int>>& candidates, int group_size,  std::vector<Cell> cells){
     if (candidates.size() == group_size){
         // Prepare a container to store the result
         std::set<int> union_set;

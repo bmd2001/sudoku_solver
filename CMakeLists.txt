@@ -25,7 +25,7 @@ find_program(CPPCHECK_EXECUTABLE cppcheck PATHS "/usr/local/bin")
 
 if (CPPCHECK_EXECUTABLE)
     add_custom_target(cppcheck
-        COMMAND ${CPPCHECK_EXECUTABLE} --enable=all --inconclusive --quiet --suppress=missingIncludeSystem
+        COMMAND ${CPPCHECK_EXECUTABLE} --check-level=exhaustive --inconclusive --quiet --suppress=missingIncludeSystem
                 --project=${CMAKE_BINARY_DIR}/compile_commands.json
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Running cppcheck on the source files"

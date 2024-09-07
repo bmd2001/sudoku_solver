@@ -11,6 +11,8 @@
 template<typename T>
 class Generator {
 public:
+
+// cppcheck-suppress-begin unusedFunction
     struct promise_type {
         T current_value;
 
@@ -23,11 +25,12 @@ public:
             return Generator{std::coroutine_handle<promise_type>::from_promise(*this)};
         }
 
-        std::suspend_always initial_suspend() { return {}; }
-        std::suspend_always final_suspend() noexcept { return {}; }
-        void return_void() {}
-        void unhandled_exception() { std::terminate(); }
+        static std::suspend_always initial_suspend() { return {}; }
+        static std::suspend_always final_suspend() noexcept { return {}; }
+        static void return_void() {}
+        static void unhandled_exception() { std::terminate(); }
     };
+// cppcheck-suppress-end unusedFunction
 
     using handle_type = std::coroutine_handle<promise_type>;
 
@@ -55,7 +58,7 @@ public:
     struct iterator {
         handle_type coro_handle;
 
-        iterator(handle_type h) : coro_handle(h) {}
+        explicit iterator(handle_type h) : coro_handle(h) {}
 
         // Dereference to get the current value
         T operator*() const { return coro_handle.promise().current_value; }
@@ -88,7 +91,7 @@ public:
         return iterator{coro_handle};
     }
 
-    iterator end() { return iterator{nullptr}; }
+    static iterator end() { return iterator{nullptr}; }
 
     // Retrieve the next value from the coroutine
     std::optional<T> next() {

@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include <sstream>
 
+// cppcheck-suppress constParameterReference
 Generator<std::pair<std::pair<int, int>, int>> findUniqueElements(Generator<std::pair<std::pair<int, int>, std::set<int>>>& constraints) {
     std::map<int, std::pair<int, int>> candidates;
     std::set<int> duplicates;
