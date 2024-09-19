@@ -10,7 +10,10 @@ class SudokuBoard{
 
     public:
 
+        SudokuBoard() = delete;
         explicit SudokuBoard(const std::vector<std::vector<int>>& board);
+        SudokuBoard(const SudokuBoard& other);
+        SudokuBoard& operator=(const SudokuBoard& other);
         std::vector<int>& operator[](int);
         void printBoard() const;
         bool isBoardFull();

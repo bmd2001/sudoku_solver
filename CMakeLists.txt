@@ -9,6 +9,19 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+message(STATUS "LCOV_PATH: ${LCOV_PATH}")
+message(STATUS "GENHTML_PATH: ${GENHTML_PATH}")
+
+# Set the path for custom CMake modules
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules/)
+
+# Enable testing
+enable_testing()
+
+# Add Google Test
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+
 
 # Add subdirectories
 add_subdirectory(src)
@@ -33,3 +46,9 @@ if (CPPCHECK_EXECUTABLE)
 else()
     message(WARNING "cppcheck executable not found. Install cppcheck to use this target.")
 endif()
+
+add_custom_target(run_tests
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure || true
+    DEPENDS test_src # Add other test targets here
+    COMMENT "Running all unit tests"
+)

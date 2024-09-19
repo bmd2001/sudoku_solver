@@ -2,10 +2,25 @@
 #include <coroutine>
 
 SudokuBoard::SudokuBoard(const std::vector<std::vector<int>>& board)
-    :N(board.size()), m_board(board)
+    : N(board.size()), m_board(board)
     {
 
     };
+
+SudokuBoard::SudokuBoard(const SudokuBoard& other)
+    : N(other.N), m_board(other.m_board) {
+    // Here, `other.N` and `other.m_board` are copied to the new instance
+}
+
+SudokuBoard& SudokuBoard::operator=(const SudokuBoard& other) {
+    if (this != &other) {
+        if (N != other.N) { // Check if N is different
+            throw std::invalid_argument("Cannot copy-assign boards with different sizes.");
+        }
+        m_board = other.m_board;
+    }
+    return *this;
+}
 
 std::vector<int>& SudokuBoard::operator[](int index){
     return m_board[index];
@@ -35,6 +50,9 @@ bool SudokuBoard::isBoardFull(){
 }
 
 bool SudokuBoard::isCellSafe(int row, int col, int num) const{
+    if (m_board[row][col] != 0){
+        return false;
+    }
     auto iterator = this->getCellInfluenceIterator(row, col);
     return std::all_of(iterator.begin(), iterator.end(), [num](const auto& pair) {
         return pair.second != num;
