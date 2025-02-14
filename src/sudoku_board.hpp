@@ -25,6 +25,7 @@ class SudokuBoard{
     
     private:
         std::vector<std::vector<int>> m_board;
+        std::set<std::pair<std::vector<Cell>, std::set<int>>> groups;
 
 };
 

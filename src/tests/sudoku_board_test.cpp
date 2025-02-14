@@ -7,6 +7,7 @@ protected:
     SudokuBoard* empty_board;
     SudokuBoard* board;
     SudokuBoard* full_board;
+    SudokuBoard* wrong_dimension_board;
 
     void SetUp() override {
         // Initialize boards here
@@ -33,12 +34,17 @@ protected:
             {2, 8, 7, 4, 1, 9, 6, 3, 5},
             {3, 4, 5, 2, 8, 6, 1, 7, 9}
         });
+        wrong_dimension_board = new SudokuBoard({
+            {1, 2},
+            {2, 1}
+        });
     }
 
     void TearDown() override {
         delete empty_board;
         delete board;
         delete full_board;
+        delete wrong_dimension_board;
     }
 };
 
@@ -46,6 +52,7 @@ TEST_F(SudokuBoardTest, isBoardFull){
     ASSERT_FALSE(empty_board->isBoardFull());
     ASSERT_FALSE(board->isBoardFull());
     ASSERT_TRUE(full_board->isBoardFull());
+    ASSERT_TRUE(wrong_dimension_board->isBoardFull());
 }
 
 TEST_F(SudokuBoardTest, isCellSafe) {
@@ -55,6 +62,10 @@ TEST_F(SudokuBoardTest, isCellSafe) {
     for (int i = 1; i <= full_board->N; ++i){
         ASSERT_FALSE(full_board->isCellSafe(0, 0, i));
     }
+}
+
+TEST_F(SudokuBoardTest, wrongDimensionAssignment){
+    ASSERT_THROW(*board = *wrong_dimension_board, std::invalid_argument);
 }
 
 // Main function for Google Test

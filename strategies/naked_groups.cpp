@@ -72,6 +72,8 @@ bool NakedGroups::apply(SudokuBoard& board, Constraints& constraints){
             }
         }
     }
+    
+
     return result;
 }
 
